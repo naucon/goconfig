@@ -1,7 +1,7 @@
 # Go Config
 
 [![Build](https://github.com/naucon/goconfig/actions/workflows/go-ci.yml/badge.svg)](https://github.com/naucon/goconfig/actions/workflows/go-ci.yml)
-[![Coverage](https://codecov.io/gh/naucon/goconfig/branch/main/graph/badge.svg?token=3R985BKFKB)](https://codecov.io/gh/naucon/goconfig)
+[![Coverage](https://codecov.io/gh/naucon/goconfig/branch/master/graph/badge.svg?token=3R985BKFKB)](https://codecov.io/gh/naucon/goconfig)
 
 This package is a lightweight configuration management for go projects.
 It manages yaml configurations for different environments like prod, stage, test.
