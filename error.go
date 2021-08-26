@@ -7,7 +7,7 @@ import (
 const (
 	errConfigEmptyEnv = "configuration: environments can't be empty"
 	errConfigInvalid  = "configuration: config file can't be decoded, wrong format"
-	errConfigMissing = "configuration: missing config file"
+	errConfigMissing  = "configuration: missing config file"
 )
 
 type ConfigError struct {
