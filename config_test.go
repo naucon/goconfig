@@ -3,7 +3,9 @@ package goconfig
 import (
 	"fmt"
 	"github.com/naucon/goconfig/examples"
+	logMock "github.com/naucon/goconfig/mock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"io"
 	"os"
 	"testing"
@@ -199,6 +201,69 @@ func TestConfig_NewConfig(t *testing.T) {
 		assert.Equal(t, 8000, cfg.Server.Port)
 		assert.Empty(t, cfg.Server.TrustedProxies)
 		assert.Equal(t, "", cfg.Secret)
+	})
+
+	t.Run("TestConfig_NewConfig_ProdVerbose_ShouldLog", func(t *testing.T) {
+		os.Clearenv()
+
+		logger := logMock.NewLoggerMock()
+		logger.On("Printf", mock.Anything, mock.Anything).Times(7)
+
+		cfg := examples.Configuration{}
+		options := Options{
+			DotEnvPath:          "./testdata/",
+			ConfigPath:          "./testdata/valid/",
+			ConfigFileExtension: "yaml",
+			Verbose:             true,
+			Logger:              logger,
+		}
+		c := NewConfig(options)
+		err := c.Load("prod", &cfg)
+		assert.NoError(t, err)
+
+		logger.AssertExpectations(t)
+	})
+
+	t.Run("TestConfig_NewConfig_TestVerbose_ShouldLog", func(t *testing.T) {
+		os.Clearenv()
+		cfg := examples.Configuration{}
+		logger := logMock.NewLoggerMock()
+		logger.On("Printf", mock.Anything, mock.Anything).Times(5)
+		options := Options{
+			ConfigPath: "./examples/",
+			Verbose:    true,
+			Logger:     logger,
+		}
+		c := NewConfig(options)
+		err := c.Load("test", &cfg)
+		assert.NoError(t, err)
+
+		logger.AssertExpectations(t)
+	})
+
+	t.Run("TestConfig_NewConfig_TestMissingVerbose_ShouldLog", func(t *testing.T) {
+		os.Clearenv()
+
+		logger := logMock.NewLoggerMock()
+		logger.On("Printf", mock.Anything, mock.Anything).Times(4)
+
+		cfg := examples.Configuration{
+			Server: examples.Server{
+				Port: 8000,
+			},
+		}
+		options := Options{
+			DotEnvPath:          "./testdata/",
+			ConfigPath:          "./testdata/missing/",
+			ConfigFileExtension: "yaml",
+			Verbose:             true,
+			Logger:              logger,
+		}
+		c := NewConfig(options)
+		err := c.Load("test", &cfg)
+		assert.Error(t, err)
+
+		logger.AssertExpectations(t)
 	})
 
 	teardown()

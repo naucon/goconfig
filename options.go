@@ -6,4 +6,5 @@ type Options struct {
 	ConfigFileExtension string
 	TestEnv             []string
 	Verbose             bool
+	Logger              logger
 }

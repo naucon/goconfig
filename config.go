@@ -42,21 +42,21 @@ func (c *config) loadDotEnv(path string, env string) {
 	var filePath string
 
 	if c.options.Verbose {
-		log.Printf("loading dotenv from %s ...\n", path)
+		c.options.Logger.Printf("loading dotenv from %s ...\n", path)
 	}
 
 	// loads eg. .env.prod.local
 	filePath = path + ".env." + env + ".local"
 	err = godotenv.Load(filePath)
 	if c.options.Verbose && err == nil {
-		log.Printf("dotenv loaded %s!\n", filePath)
+		c.options.Logger.Printf("dotenv loaded %s!\n", filePath)
 	}
 
 	// loads eg. .env.prod
 	filePath = path + ".env." + env
 	err = godotenv.Load(filePath)
 	if c.options.Verbose && err == nil {
-		log.Printf("dotenv loaded %s!\n", filePath)
+		c.options.Logger.Printf("dotenv loaded %s!\n", filePath)
 	}
 
 	// loads eg. .env.local
@@ -64,7 +64,7 @@ func (c *config) loadDotEnv(path string, env string) {
 		filePath = path + ".env.local"
 		err = godotenv.Load(filePath)
 		if c.options.Verbose && err == nil {
-			log.Printf("dotenv loaded %s!\n", filePath)
+			c.options.Logger.Printf("dotenv loaded %s!\n", filePath)
 		}
 	}
 
@@ -72,7 +72,7 @@ func (c *config) loadDotEnv(path string, env string) {
 	filePath = path + ".env"
 	err = godotenv.Load(filePath)
 	if c.options.Verbose && err == nil {
-		log.Printf("dotenv loaded %s!\n", filePath)
+		c.options.Logger.Printf("dotenv loaded %s!\n", filePath)
 	}
 }
 
@@ -87,7 +87,7 @@ func (c *config) isTestEnv(env string) bool {
 
 func (c *config) loadYamlConfiguration(filePath string, out interface{}) error {
 	if c.options.Verbose {
-		log.Printf("loading yaml config %s ...\n", filePath)
+		c.options.Logger.Printf("loading yaml config %s ...\n", filePath)
 	}
 	bytContent, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -99,7 +99,7 @@ func (c *config) loadYamlConfiguration(filePath string, out interface{}) error {
 		return NewConfigError(errConfigInvalid, err)
 	}
 	if c.options.Verbose {
-		log.Printf("yaml config loaded %s!\n", filePath)
+		c.options.Logger.Printf("yaml config loaded %s!\n", filePath)
 	}
 
 	return nil
@@ -117,5 +117,8 @@ func (c *config) optionDefaults() {
 	}
 	if len(c.options.TestEnv) == 0 {
 		c.options.TestEnv = append(c.options.TestEnv, "test")
+	}
+	if c.options.Logger == nil {
+		c.options.Logger = log.New(os.Stderr, "", log.LstdFlags)
 	}
 }
